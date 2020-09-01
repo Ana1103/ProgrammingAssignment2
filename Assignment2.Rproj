@@ -1,13 +1,46 @@
-Version: 1.0
+##There are two functions makeCacheMatrix and cacheSolve
+##makeCacheMatrix 
+makeCacheMatrix <- function(x = matrix()){
+  ##Null represents null objects and I've assigned thisto a variable inv
+  inv <- NULL
+  ##method to set the value of the matrix
+  set <- function(y){
+    x <<- y 
+    inv <<- NULL ##this double arrow assignment operator is useful in 
+    ##conjunction with a closer to preserve they stood inside of an AR object. 
+    ##So is a function that allow us to have two level of parameters, and is 
+    ##capable of modifying variables in the levels.
+  }
+  ##method that get the matrix
+  get <- function() {x} ##return the matrix
+  ##to set the value oh the inverse 
+  setInverse <- function(inverse) {inv <<- inverse}
+  ##to get the value of the inverse of the matrix
+  getInverse <- function() {inv}
+  ##we create a list of the methods
+  list(set = set, get = get, setInverse = setInverse, getInverse = getInverse)
+}
 
-RestoreWorkspace: Default
-SaveWorkspace: Default
-AlwaysSaveHistory: Default
-
-EnableCodeIndexing: Yes
-UseSpacesForTab: Yes
-NumSpacesForTab: 2
-Encoding: UTF-8
-
-RnwWeave: Sweave
-LaTeX: pdfLaTeX
+cacheSolve <- function(x, ...){
+  ## return a matrix that's the inverse of x and assigns it to in inv
+  inv <- x$getInverse()
+  ##if the inverse ir already set, if will return it
+  if(!is.null(inv)){
+    message("getting cached data")
+    return(inv)
+  }
+  ##we get the matrix from our object with:
+  mat <- x$get()
+  ##with this generic function we solves the 
+  ##equation for our matrix
+  inv <- solve(mat, ...)
+  ##we use the $ symbol to extract elements by
+  ##literal name or have a partial matching. By the way, we set
+  ##the inverse to the object
+  x$setInverse(inv)
+  ##Return the matrix
+  inv
+}
+## So, this function computes the inverse of the special "matrix" created by 
+## makeCacheMatrix above. If the inverse has already been calculated (and the 
+## matrix has not changed), then it should retrieve the inverse from the cache.
